@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@chakra-ui/icons':
+    specifier: ^2.2.4
+    version: 2.2.4(@chakra-ui/react@3.22.0)(react@19.1.0)
   '@chakra-ui/react':
     specifier: ^3.22.0
     version: 3.22.0(@emotion/react@11.14.0)(react-dom@19.1.0)(react@19.1.0)
@@ -202,6 +205,16 @@ packages:
     dependencies:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.27.1
+    dev: false
+
+  /@chakra-ui/icons@2.2.4(@chakra-ui/react@3.22.0)(react@19.1.0):
+    resolution: {integrity: sha512-l5QdBgwrAg3Sc2BRqtNkJpfuLw/pWRDwwT58J6c4PqQT6wzXxyNa8Q0PForu1ltB5qEiFb1kxr/F/HO1EwNa6g==}
+    peerDependencies:
+      '@chakra-ui/react': '>=2.0.0'
+      react: '>=18'
+    dependencies:
+      '@chakra-ui/react': 3.22.0(@emotion/react@11.14.0)(react-dom@19.1.0)(react@19.1.0)
+      react: 19.1.0
     dev: false
 
   /@chakra-ui/react@3.22.0(@emotion/react@11.14.0)(react-dom@19.1.0)(react@19.1.0):
