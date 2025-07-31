@@ -101,14 +101,10 @@ export default function BatteryPromoCard({
 
           <Flex justify="space-between" align="flex-end">
             <Box>
-              <Text fontSize="sm">改装价格</Text>
               <Heading as="h4" size="lg" color="blue.500">
                 {price}
               </Heading>
             </Box>
-            <Button colorPalette="blue" size="sm" variant="outline">
-              立即订购
-            </Button>
           </Flex>
         </Stack>
       </Box>

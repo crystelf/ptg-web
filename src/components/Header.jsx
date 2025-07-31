@@ -8,9 +8,9 @@ import {
   Button,
   Menu,
 } from "@chakra-ui/react";
-import { SunIcon, MoonIcon, HamburgerIcon } from "@chakra-ui/icons";
 import NextLink from "next/link";
 import { useColorMode } from "@/components/ui/color-mode";
+import { FiMoon, FiSun, FiMenu } from "react-icons/fi";
 
 export default function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -85,7 +85,7 @@ export default function Header() {
             onClick={toggleColorMode}
             variant="ghost"
           >
-            {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+            {colorMode === "light" ? <FiMoon size={20} /> : <FiSun size={20} />}
           </IconButton>
 
           <Menu.Root>
@@ -95,7 +95,7 @@ export default function Header() {
                 variant="outline"
                 display={{ md: "none" }}
               >
-                <HamburgerIcon />
+                <FiMenu size={20} />
               </IconButton>
             </Menu.Trigger>
             <Menu.Positioner>

@@ -46,7 +46,7 @@ export default function DronesPage() {
             大疆无人机专业改装方案
           </Heading>
           <Text fontSize="xl">
-            原厂性能升级 | 电池续航提升30% | 专业定制服务
+            原厂性能升级 | 电池续航提升90% | 专业定制服务
           </Text>
         </VStack>
       </Box>
@@ -99,9 +99,6 @@ export default function DronesPage() {
                     {drone.battery}
                   </Text>
                 )}
-                <Button mt={4} w="full" colorScheme="blue">
-                  查看详情
-                </Button>
               </Box>
             </Box>
           ))}
@@ -115,7 +112,7 @@ export default function DronesPage() {
               专业电池改装方案
             </Heading>
             <Text fontSize="lg" maxW="2xl">
-              采用军工级电芯，通过安全认证，续航提升30%-50%，循环次数达200+
+              采用军工级电芯，通过安全认证，续航提升90%-120%，循环次数达1300+
             </Text>
           </VStack>
 
@@ -149,7 +146,7 @@ export default function DronesPage() {
             <Heading as="h3" size="md">
               电池质保
             </Heading>
-            <Text>所有改装电池提供1年质保，安全无忧</Text>
+            <Text>所有改装电池提供3个月质保，安全无忧</Text>
           </VStack>
           <VStack textAlign="center" p={6} bg={cardBg} borderRadius="lg">
             <Box fontSize="4xl" mb={4}>
@@ -167,7 +164,7 @@ export default function DronesPage() {
             <Heading as="h3" size="md">
               全国包邮
             </Heading>
-            <Text>支持到店改装或邮寄服务，顺丰包邮</Text>
+            <Text>支持全国包邮邮寄服务</Text>
           </VStack>
         </Grid>
       </Box>
