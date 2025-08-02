@@ -19,8 +19,8 @@ export default function Header() {
 
   const navLinks = [
     { name: "无人机", href: "#drones" },
-    { name: "电池改装", href: "#batteries" },
-    { name: "服务案例", href: "#cases" },
+    { name: "电池改装", href: "/egg/fumu.html" },
+    { name: "服务案例", href: "/egg/xiaomibl.html" },
     { name: "关于我们", href: "#about" },
   ];
 
