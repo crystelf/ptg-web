@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>父母性别预测网站</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #ffe6ff 100%);
+      color: #333;
+      overflow: hidden;
+    }
+    
+    /* 首页样式 */
+    #home-page {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 30px 20px;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 1s ease-out;
+    }
+    
+    .header {
+      text-align: center;
+      padding: 20px 0;
+      margin-bottom: 30px;
+    }
+    
+    h1 {
+      font-size: clamp(28px, 6vw, 42px);
+      margin-bottom: 15px;
+      color: #ff6b6b;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    h2 {
+      font-size: clamp(16px, 3.5vw, 20px);
+      color: #888;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+    
+    .button-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex: 1;
+      width: 100%;
+      margin: 40px 0;
+    }
+    
+    #predict-btn {
+      width: 80%;
+      margin-top: 200px;
+      max-width: 320px;
+      padding: 18px 30px;
+      background: #ff6b6b;
+      border: none;
+      border-radius: 50px;
+      color: white;
+      font-size: clamp(18px, 4.5vw, 22px);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    
+    #predict-btn:hover {
+      background: #e076ff;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(224, 118, 255, 0.6);
+    }
+    
+    #predict-btn:hover::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50px;
+      animation: pulse 1.5s infinite;
+      z-index: -1;
+    }
+    
+    #predict-btn:hover::after {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      border: 2px solid rgba(255,255,255,0.5);
+      border-radius: 52px;
+      animation: borderGlow 2s infinite;
+      z-index: -1;
+    }
+    
+    #predict-btn.click-effect {
+      background: white;
+      transform: scale(1.5);
+      color: transparent;
+      transition: all 0.3s ease-in-out;
+    }
+    
+    .fullscreen-effect {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: white;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .fullscreen-effect.active {
+      opacity: 1;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: #aaa;
+      font-size: 13px;
+      font-weight: 300;
+    }
+
+    .decoration {
+      position: absolute;
+      font-size: clamp(80px, 15vw, 120px);
+      opacity: 0.08;
+      z-index: 0;
+      pointer-events: none;
+    }
+    
+    .decoration.top {
+      top: -30px;
+      right: -30px;
+      color: #ff6b6b;
+    }
+    
+    .decoration.bottom {
+      bottom: -30px;
+      left: -30px;
+      color: #e076ff;
+    }
+
+    /* 问卷页样式 */
+    #survey-page {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      padding: 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
+    }
+    
+    .container {
+      max-width: 800px;
+      width: 90%;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      padding: 30px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .question-container {
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    
+    .question-box {
+      background: #f9f9f9;
+      border-radius: 15px;
+      padding: 30px;
+      margin: 10px 0;
+      text-align: center;
+      transition: all 0.3s ease;
+      opacity: 0;
+      transform: translateY(10px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+    
+    .question-box.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .question {
+      font-weight: bold;
+      margin-bottom: 25px;
+      color: #555;
+      font-size: clamp(1.2rem, 3vw, 1.5rem);
+    }
+    
+    .options {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .option {
+      display: block;
+      margin-bottom: 5px;
+      padding: 15px;
+      background: white;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 2px solid #eee;
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      text-align: center;
+    }
+    
+    .option:hover {
+      background: #f0f0f0;
+      transform: scale(1.02);
+      border-color: #e076ff;
+    }
+    
+    .option:active {
+      transform: scale(0.98);
+    }
+    
+    .option.selected {
+      background: #e076ff;
+      color: white;
+      border-color: #e076ff;
+    }
+    
+    .progress {
+      margin-top: 15px;
+      color: #888;
+      font-size: clamp(0.9rem, 2vw, 1rem);
+    }
+    
+    .nav-buttons {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 18px;
+    }
+    
+    .nav-btn {
+      padding: 10px 30px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: clamp(0.9rem, 2vw, 1rem);
+    }
+
+    .next-btn {
+      margin-right: 10px;
+    }
+    
+    .next-btn, .submit-btn {
+      background: #ff6b6b;
+      color: white;
+    }
+    
+    .nav-btn:hover {
+      transform: scale(1.05);
+    }
+    
+    .next-btn:hover, .submit-btn:hover {
+      background: #e076ff;
+    }
+    
+    .progress-container {
+      width: 100%;
+      height: 15px;
+      background: #f0f0f0;
+      border-radius: 10px;
+      margin: 25px 0;
+      overflow: hidden;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ff6b6b, #e076ff);
+      border-radius: 10px;
+      transition: width 0.3s ease;
+    }
+    
+    .analyzing-text {
+      margin: 20px 0;
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: #666;
+    }
+    
+    .final-result {
+      font-size: clamp(1.4rem, 4vw, 1.8rem);
+      margin: 25px 0;
+      color: #ff6b6b;
+      font-weight: bold;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s ease;
+    }
+    
+    .show-result {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* 动画 */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: scale(0.95);
+        opacity: 0.7;
+      }
+      70% {
+        transform: scale(1.05);
+        opacity: 0.2;
+      }
+      100% {
+        transform: scale(0.95);
+        opacity: 0.7;
+      }
+    }
+    
+    @keyframes borderGlow {
+      0% {
+        opacity: 0.8;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.3;
+        transform: scale(1.02);
+      }
+      100% {
+        opacity: 0.8;
+        transform: scale(1);
+      }
+    }
+
+    /* 移动端优化 */
+    @media (max-width: 768px) {
+      #home-page {
+        padding: 25px 15px;
+      }
+      
+      .header {
+        padding: 15px 0;
+      }
+      
+      #predict-btn {
+        padding: 16px 25px;
+      }
+      
+      .container {
+        padding: 20px;
+        width: 95%;
+      }
+      
+      .question-box {
+        padding: 20px;
+      }
+      
+      .nav-btn {
+        padding: 10px 25px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 26px;
+      }
+      
+      h2 {
+        font-size: 15px;
+      }
+      
+      #predict-btn {
+        padding: 15px 20px;
+        font-size: 17px;
+      }
+      
+      .footer {
+        font-size: 12px;
+      }
+      
+      .container {
+        padding: 15px;
+      }
+      
+      .question-box {
+        padding: 15px;
+      }
+      
+      .option {
+        padding: 12px;
+      }
+      
+      .nav-btn {
+        padding: 8px 20px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 首页 -->
+  <div id="home-page">
+    <div class="decoration top">♂♀</div>
+    <div class="decoration bottom">♀♂</div>
+    
+    <div class="header">
+      <h1>父母性别预测网站</h1>
+      <h2>基于量子神金学技术 · 准确率高达99.9%</h2>
+    </div>
+    
+    <div class="button-container">
+      <button id="predict-btn">开始预测</button>
+    </div>
+    
+    <div class="footer">
+      本网站仅供娱乐，结果不具有科学依据
+    </div>
+  </div>
+
+  <!-- 问卷页 -->
+  <div id="survey-page">
+    <div class="container">
+      <div class="decoration top">♂♀</div>
+      <div class="decoration bottom">♀♂</div>
+      
+      <div id="survey-questions">
+        <div class="question-container">
+          <h1>父母性别预测</h1>
+          <p class="progress">请选择预测对象</p>
+          
+          <div class="question-box show" id="question-box">
+            <div class="question">你想预测父亲还是母亲的性别？</div>
+            <div class="options" id="options">
+              <div class="option" data-value="father">父亲</div>
+              <div class="option" data-value="mother">母亲</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 禁止右键菜单
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+    });
+
+    // 问题数据
+    const questions = [
+      {
+        question: "1. 你吃早餐了吗？",
+        options: ["吃了", "没吃"]
+      },
+      {
+        question: "2. 你吃午餐了吗？",
+        options: ["吃了", "没吃"]
+      },
+      {
+        question: "3. 你吃晚餐了吗？",
+        options: ["吃了", "没吃"]
+      }
+    ];
+    
+    // 答案存储
+    const answers = {};
+    let currentQuestion = -1;
+    let predictTarget = "";
+    
+    // 页面元素
+    const homePage = document.getElementById('home-page');
+    const surveyPage = document.getElementById('survey-page');
+    const predictBtn = document.getElementById('predict-btn');
+    
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', function() {
+      // 首页按钮事件
+      predictBtn.addEventListener('click', function() {
+        // 添加点击效果
+        this.classList.add('click-effect');
+        
+        // 创建全屏遮罩层
+        const overlay = document.createElement('div');
+        overlay.className = 'fullscreen-effect';
+        document.body.appendChild(overlay);
+        
+        // 激活遮罩层
+        setTimeout(() => {
+          overlay.classList.add('active');
+          
+          // 动画完成后显示问卷页
+          setTimeout(() => {
+            homePage.style.display = 'none';
+            surveyPage.style.display = 'flex';
+            document.body.removeChild(overlay);
+            renderQuestion();
+          }, 500);
+        }, 300);
+      });
+      
+      // 禁止触摸滚动
+      document.addEventListener('touchmove', function(e) {
+        e.preventDefault();
+      }, { passive: false });
+    });
+    
+    // 渲染当前问题
+    function renderQuestion() {
+      const container = document.getElementById('survey-questions');
+      
+      // 第一步：选择预测对象
+      if (currentQuestion === -1) {
+        container.innerHTML = `
+          <div class="question-container">
+            <h1>父母性别预测</h1>
+            <p class="progress">请选择预测对象</p>
+            
+            <div class="question-box" id="question-box">
+              <div class="question">你想预测父亲还是母亲的性别？</div>
+              <div class="options" id="options">
+                <div class="option" data-value="father">父亲</div>
+                <div class="option" data-value="mother">母亲</div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        // 添加选项点击事件
+        document.querySelectorAll('.option').forEach(opt => {
+          opt.addEventListener('click', function() {
+            predictTarget = this.getAttribute('data-value');
+            currentQuestion = 0;
+            renderQuestion();
+          });
+        });
+        
+        // 显示问题框
+        setTimeout(() => {
+          const questionBox = document.getElementById('question-box');
+          if (questionBox) questionBox.classList.add('show');
+        }, 10);
+      }
+      // 正常问题流程
+      else if (currentQuestion < questions.length) {
+        const q = questions[currentQuestion];
+        const isLastQuestion = currentQuestion === questions.length - 1;
+        
+        container.innerHTML = `
+          <div class="question-container">
+            <h1>父母性别预测</h1>
+            <p class="progress">问题 ${currentQuestion + 1}/${questions.length}</p>
+            
+            <div class="question-box" id="question-box">
+              <div class="question">${q.question}</div>
+              <div class="options" id="options">
+                ${q.options.map((opt, i) => `
+                  <div class="option" data-value="${i}" ${answers[`q${currentQuestion}`] === opt ? 'class="selected"' : ''}>${opt}</div>
+                `).join('')}
+              </div>
+            </div>
+            
+            <div class="nav-buttons">
+              ${isLastQuestion ? 
+                '<button class="nav-btn submit-btn" id="submit-btn" disabled>提交问卷</button>' : 
+                '<button class="nav-btn next-btn" id="next-btn" disabled>下一题</button>'}
+            </div>
+          </div>
+        `;
+        
+        // 如果有已选答案，启用下一题/提交按钮
+        if (answers[`q${currentQuestion}`]) {
+          document.getElementById(isLastQuestion ? 'submit-btn' : 'next-btn').disabled = false;
+        }
+        
+        // 添加选项点击事件
+        document.querySelectorAll('.option').forEach(opt => {
+          opt.addEventListener('click', function() {
+            document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+            answers[`q${currentQuestion}`] = this.textContent;
+            document.getElementById(isLastQuestion ? 'submit-btn' : 'next-btn').disabled = false;
+          });
+        });
+        
+        // 下一题/提交按钮事件
+        if (isLastQuestion) {
+          document.getElementById('submit-btn').addEventListener('click', showAnalyzingProgress);
+        } else {
+          document.getElementById('next-btn').addEventListener('click', function() {
+            const questionBox = document.getElementById('question-box');
+            if (questionBox) {
+              questionBox.classList.remove('show');
+              setTimeout(goNext, 300);
+            }
+          });
+        }
+        
+        // 显示问题框
+        setTimeout(() => {
+          const questionBox = document.getElementById('question-box');
+          if (questionBox) questionBox.classList.add('show');
+        }, 10);
+      }
+    }
+    
+    // 下一题
+    function goNext() {
+      currentQuestion++;
+      renderQuestion();
+    }
+    
+    // 显示分析进度
+    function showAnalyzingProgress() {
+      const container = document.getElementById('survey-questions');
+      
+      container.innerHTML = `
+        <div class="question-container">
+          <h1>量子分析中...</h1>
+          <div class="question-box show" id="question-box">
+            <div class="analyzing-text">正在使用量子计算机分析您的答案</div>
+            <div class="progress-container">
+              <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div class="final-result" id="final-result"></div>
+          </div>
+        </div>
+      `;
+      
+      // 模拟进度条
+      const progressBar = document.getElementById('progress-bar');
+      const finalResult = document.getElementById('final-result');
+      const analyzingText = document.querySelector('.analyzing-text');
+      const texts = [
+        "正在初始化量子比特...",
+        "校准玄学传感器...",
+        "分析DNA样本...",
+        "计算性别概率...",
+        "生成最终结果..."
+      ];
+      
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += Math.random() * 15;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(interval);
+          
+          // 显示最终结果
+          setTimeout(() => {
+            const result = predictTarget === "father" ? 
+              "结果：你的父亲是男性!!!" : 
+              "结果：你的母亲是女性!!!";
+            
+            finalResult.textContent = result;
+            analyzingText.textContent = "分析完成！";
+            
+            setTimeout(() => {
+              finalResult.classList.add('show-result');
+              
+              // 添加操作按钮
+              const buttons = document.createElement('div');
+              buttons.className = 'options';
+              buttons.innerHTML = `
+                <div class="option" onclick="resetSurvey()">再测一次</div>
+                <div class="option" onclick="goBackToHome()">关闭问卷</div>
+              `;
+              document.querySelector('.question-box').appendChild(buttons);
+            }, 300);
+          }, 500);
+        }
+        
+        progressBar.style.width = `${progress}%`;
+        
+        // 更新分析文本
+        if (progress < 20) analyzingText.textContent = texts[0];
+        else if (progress < 40) analyzingText.textContent = texts[1];
+        else if (progress < 60) analyzingText.textContent = texts[2];
+        else if (progress < 80) analyzingText.textContent = texts[3];
+        else analyzingText.textContent = texts[4];
+      }, 300);
+    }
+    
+    // 重置问卷
+    function resetSurvey() {
+      currentQuestion = -1;
+      predictTarget = "";
+      Object.keys(answers).forEach(key => delete answers[key]);
+      renderQuestion();
+    }
+    
+    // 返回首页
+    function goBackToHome() {
+      // 重置问卷状态
+      resetSurvey();
+      
+      // 隐藏问卷页
+      surveyPage.style.display = 'none';
+      
+      // 显示首页
+      homePage.style.display = 'flex';
+    }
+  </script>
+</body>
+</html>
